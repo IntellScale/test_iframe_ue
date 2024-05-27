@@ -1,0 +1,63 @@
+<!-- save this as fetchData.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch API Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .data-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="apiData">Loading...</div>
+    <script>
+        // Function to get query string parameters
+        function getQueryParams() {
+            const params = {};
+            window.location.search.substring(1).split("&").forEach(param => {
+                const [key, value] = param.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value);
+            });
+            return params;
+        }
+
+        // Get query string parameters
+        const queryParams = getQueryParams();
+        const userId = queryParams.userId; // Example: get userId parameter
+
+        // Your API URL
+        const apiUrl = `https://api.example.com/data?userId=${userId}`;
+
+        // Function to fetch data from the API
+        async function fetchData() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                // Assuming data is an array of objects
+                const html = data.map(item => `
+                    <div class="data-item">
+                        <h3>${item.title}</h3>
+                        <p>${item.description}</p>
+                    </div>
+                `).join('');
+
+                document.getElementById('apiData').innerHTML = html;
+            } catch (error) {
+                document.getElementById('apiData').innerHTML = 'Failed to load data';
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Call fetchData on page load
+        fetchData();
+    </script>
+</body>
+</html>
